@@ -2,16 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workflows_My_LA_First_name": {
-            "defaultValue": "My-LA-First1",
+        "workflows_logic_app_name_changed_on_15th_name": {
+            "defaultValue": "logic_app_name_changed_on_15th",
             "type": "String"
         },
         "connections_gmail_externalid": {
-            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA-RG/providers/Microsoft.Web/connections/gmail",
+            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA/providers/Microsoft.Web/connections/gmail",
             "type": "String"
         },
         "connections_rss_externalid": {
-            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA-RG/providers/Microsoft.Web/connections/rss",
+            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA/providers/Microsoft.Web/connections/rss",
             "type": "String"
         }
     },
@@ -20,8 +20,8 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('workflows_My_LA_First_name')]",
-            "location": "westus",
+            "name": "[parameters('workflows_logic_app_name_changed_on_15th_name')]",
+            "location": "centralus",
             "properties": {
                 "state": "Enabled",
                 "definition": {
@@ -34,7 +34,7 @@
                         }
                     },
                     "triggers": {
-                        "When_a_feed_item_is_published": {
+                        "When_a_feed_item_is_published_2": {
                             "recurrence": {
                                 "frequency": "Minute",
                                 "interval": 1
@@ -61,13 +61,13 @@
                         }
                     },
                     "actions": {
-                        "Send_email_(V2)": {
+                        "Send_email_(V2)_2": {
                             "runAfter": {},
                             "type": "ApiConnection",
                             "inputs": {
                                 "body": {
-                                    "Body": "<p>Title : @{triggerBody()?['title']}<br>\n<br>\nFeed Published On: @{triggerBody()?['publishDate']}<br>\n<br>\nFeed Id: @{triggerBody()?['id']}</p>",
-                                    "Subject": "New RSS Item: @{triggerBody()?['title']}",
+                                    "Body": "<p>Feed Title: @{triggerBody()?['title']}<br>\nFeed item: @{triggerBody()}<br>\npublished date: @{triggerBody()?['publishDate']}</p>",
+                                    "Subject": "@triggerBody()?['title']",
                                     "To": "srinu4devops@gmail.com"
                                 },
                                 "host": {
@@ -88,12 +88,12 @@
                             "gmail": {
                                 "connectionId": "[parameters('connections_gmail_externalid')]",
                                 "connectionName": "gmail",
-                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/westus/managedApis/gmail"
+                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/centralus/managedApis/gmail"
                             },
                             "rss": {
                                 "connectionId": "[parameters('connections_rss_externalid')]",
                                 "connectionName": "rss",
-                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/westus/managedApis/rss"
+                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/centralus/managedApis/rss"
                             }
                         }
                     }
