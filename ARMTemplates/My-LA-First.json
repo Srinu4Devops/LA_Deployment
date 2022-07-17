@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_My_LA_First_name": {
+            "defaultValue": "My-LA-First1",
+            "type": "String"
+        },
+        "connections_gmail_externalid": {
+            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA-RG/providers/Microsoft.Web/connections/gmail",
+            "type": "String"
+        },
+        "connections_rss_externalid": {
+            "defaultValue": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA-RG/providers/Microsoft.Web/connections/rss",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_My_LA_First_name')]",
+            "location": "westus",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_feed_item_is_published": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 1
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Minute",
+                                "interval": 1
+                            },
+                            "splitOn": "@triggerBody()?['value']",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['rss']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/OnNewFeed",
+                                "queries": {
+                                    "feedUrl": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",
+                                    "sinceProperty": "PublishDate"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Send_email_(V2)": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Body": "<p>Title : @{triggerBody()?['title']}<br>\n<br>\nFeed Published On: @{triggerBody()?['publishDate']}<br>\n<br>\nFeed Id: @{triggerBody()?['id']}</p>",
+                                    "Subject": "New RSS Item: @{triggerBody()?['title']}",
+                                    "To": "srinu4devops@gmail.com"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['gmail']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/Mail"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "gmail": {
+                                "connectionId": "[parameters('connections_gmail_externalid')]",
+                                "connectionName": "gmail",
+                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/westus/managedApis/gmail"
+                            },
+                            "rss": {
+                                "connectionId": "[parameters('connections_rss_externalid')]",
+                                "connectionName": "rss",
+                                "id": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/providers/Microsoft.Web/locations/westus/managedApis/rss"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
