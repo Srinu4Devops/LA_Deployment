@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workflows_logic_app_name_changed_on_15th_name": {
-            "value": null
+            "value": "Logic_App_17th"
         },
         "connections_gmail_externalid": {
-            "value": null
+            "value": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA/providers/Microsoft.Web/connections/gmail"
         },
         "connections_rss_externalid": {
-            "value": null
+            "value": "/subscriptions/beb2107a-2219-488b-929e-7939bb20b9a2/resourceGroups/Dev-LA/providers/Microsoft.Web/connections/rss"
         }
     }
 }
